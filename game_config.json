@@ -1,0 +1,13 @@
+{
+    "music_volume": 1.0,
+    "sfx_volume": 1.0,
+    "music_delay": 150,
+    "fps": 60,
+    "key_bindings": {
+        "track_0": "d",
+        "track_1": "f",
+        "track_2": "j",
+        "track_3": "k",
+        "pause": " "
+    }
+}

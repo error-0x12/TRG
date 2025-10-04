@@ -1,0 +1,22 @@
+name-结束符测试谱面
+maker-Test Maker
+level-3-NORMAL
+audio-None
+speed-5
+
+# 谱面内容
+0:05
+tab-1
+tab-2
+0:10
+tab-3
+tab-4
+# 结束符设置在0:10之后
+&
+# 结束符之后的内容应该被忽略
+0:15
+tab-1
+tab-2
+0:20
+tab-3
+tab-4

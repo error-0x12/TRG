@@ -1,0 +1,19 @@
+name-结束符集成测试
+maker-Test Maker
+level-3-NORMAL
+audio-None
+speed-5
+
+# 谱面内容 - 所有音符在0:10前结束
+0:05
+tab-1
+tab-2
+0:08
+tab-3
+tab-4
+0:10
+tab-1
+tab-2
+# 先设置时间到0:20，然后放置结束符
+0:20
+&

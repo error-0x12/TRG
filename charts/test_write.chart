@@ -1,0 +1,23 @@
+name-测试文字显示
+maker-测试作者-测试歌曲作者
+level-1-NORMAL
+speed-5.0
+audio-
+
+0:01
+tab-1
+write-测试文字-2
+
+0:03
+tab-2
+write-第二个文字-3
+
+0:05
+tab-3
+write-多文字 同时显示-4
+
+0:07
+tab-4
+write-最后一个文字-5
+
+&

@@ -1,0 +1,30 @@
+# TRG谱面示例
+# 这是一个简单的测试谱面文件
+
+# 初始化信息
+name-星际漫游
+maker-TRG Team-None
+level-5-HD
+audio-None
+speed-6
+
+# 谱面内容
+
+0:5
+tab-1
+tab-2
+tab-3
+tab-4
+0:10
+hold-1-16
+hold-2-16
+hold-3-16
+hold-4-3
+0:15
+drag-1
+drag-2
+drag-3
+drag-4
+0:30
+# 结束标记
+&

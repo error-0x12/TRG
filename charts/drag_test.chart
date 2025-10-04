@@ -1,0 +1,45 @@
+# TRG谱面示例
+# 这是一个专门测试DRAG音符判定的谱面文件
+
+# 初始化信息
+name-DRAG音符测试
+maker-TRG Team-None
+level-5-HD
+audio-None
+speed-1
+
+# 谱面内容
+0:1
+write-1-1
+0:2
+write-2-1
+0:3
+write-3-1
+0:4
+write-4-1
+0:5
+tab-1
+tab-2
+tab-3
+tab-4
+write-5-1
+0:6
+write-6-1
+0:10
+drag-1
+drag-2
+drag-3
+drag-4
+0:15
+drag-1
+drag-2
+drag-3
+drag-4
+0:20
+drag-1
+drag-2
+drag-3
+drag-4
+0:30
+# 结束标记
+&
