@@ -81,15 +81,3 @@ python chart_editor.py
 ## 许可证
 
 本项目采用 MIT 许可证 - 详见 LICENSE 文件
-
-## 开发
-
-### 构建可执行文件
-
-可以使用 PyInstaller 构建可执行文件：
-
-```bash
-pyinstaller --onefile Terminal_Rhythm_game.spec
-```
-
-生成的可执行文件将位于 `dist/` 目录中。
