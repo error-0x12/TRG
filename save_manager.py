@@ -17,6 +17,22 @@ import logging
 logger = logging.getLogger('TRG.SaveManager')
 logger.setLevel(logging.INFO)
 
+# 清除现有的处理器
+if logger.handlers:
+    logger.handlers.clear()
+
+# 创建文件处理器 - 使用覆盖模式('w')
+log_file = os.path.join(os.path.dirname(__file__), 'save_log.log')
+file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
+file_handler.setLevel(logging.INFO)
+
+# 设置日志格式
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# 添加处理器到logger
+logger.addHandler(file_handler)
+
 
 class ChecksumError(Exception):
     """校验和错误异常"""

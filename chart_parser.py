@@ -20,22 +20,16 @@ logger.setLevel(logging.INFO)
 if logger.handlers:
     logger.handlers.clear()
 
-# 创建控制台处理器
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-
-# 创建文件处理器
+# 创建文件处理器 - 使用覆盖模式('w')
 log_file = os.path.join(os.path.dirname(__file__), 'chart_log.log')
-file_handler = logging.FileHandler(log_file, encoding='utf-8')
+file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
 file_handler.setLevel(logging.INFO)
 
 # 设置日志格式
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-console_handler.setFormatter(formatter)
 file_handler.setFormatter(formatter)
 
 # 添加处理器到logger
-logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 
 
@@ -245,6 +239,12 @@ class ChartParser:
             if audio_file.startswith('audio-'):
                 audio_file = audio_file[6:].strip()
                 logger.info(f"注意: 从音频文件名中移除重复的'audio-'前缀: {audio_file}")
+            
+            # 特殊处理'audio-N'标记，表示没有音频文件
+            if audio_file.upper() == 'N':
+                audio_file = ''
+                logger.info("检测到'audio-N'标记，设置为无音频文件")
+            
             self.metadata['audio_file'] = audio_file
             logger.info(f"Found audio file: {self.metadata['audio_file']}")
             return True

@@ -8,7 +8,28 @@ TRG (Terminal Rhythm Game) - 音频管理器模块
 import pygame
 import time
 import os
+import logging
 from typing import Optional, Dict
+
+# 配置日志
+logger = logging.getLogger('TRG.AudioManager')
+logger.setLevel(logging.INFO)
+
+# 清除现有的处理器
+if logger.handlers:
+    logger.handlers.clear()
+
+# 创建文件处理器 - 使用覆盖模式('w')
+log_file = os.path.join(os.path.dirname(__file__), 'audio_log.log')
+file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
+file_handler.setLevel(logging.INFO)
+
+# 设置日志格式
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# 添加处理器到logger
+logger.addHandler(file_handler)
 
 
 class AudioManager:
@@ -39,8 +60,8 @@ class AudioManager:
             # 初始化完成后加载notes音效
             self._load_notes_sfx()
         except pygame.error as e:
-            print(f"音频初始化失败: {e}")
-            print("游戏将在无音频模式下运行")
+            logger.error(f"音频初始化失败: {e}")
+            logger.info("游戏将在无音频模式下运行")
             self.audio_available = False
     
     def load_music(self, filepath: str) -> bool:
@@ -53,17 +74,17 @@ class AudioManager:
         Returns:
             bool: 加载是否成功
         """
-        print(f"尝试加载音乐文件: {filepath}")
+        logger.info(f"尝试加载音乐文件: {filepath}")
         
         # 如果音频不可用，直接返回False
         if not self.audio_available:
-            print("音频系统不可用，跳过加载")
+            logger.info("音频系统不可用，跳过加载")
             return False
             
         # 检查文件是否存在
         import os
         if not os.path.exists(filepath):
-            print(f"错误: 文件不存在 - {filepath}")
+            logger.error(f"错误: 文件不存在 - {filepath}")
             return False
         
         try:
@@ -73,23 +94,23 @@ class AudioManager:
             self.music_loaded = True
             self.music_playing = False
             self.reset_time_variables()
-            print(f"成功加载音乐文件: {filepath}")
+            logger.info(f"成功加载音乐文件: {filepath}")
             return True
         except pygame.error as e:
-            print(f"加载音乐文件失败: {e}")
+            logger.error(f"加载音乐文件失败: {e}")
             # 尝试使用文件的绝对路径（有时能解决路径问题）
             abs_path = os.path.abspath(filepath)
             if abs_path != filepath:
-                print(f"尝试使用绝对路径: {abs_path}")
+                logger.info(f"尝试使用绝对路径: {abs_path}")
                 try:
                     pygame.mixer.music.load(abs_path)
                     self.music_loaded = True
                     self.music_playing = False
                     self.reset_time_variables()
-                    print(f"成功加载音乐文件(绝对路径): {abs_path}")
+                    logger.info(f"成功加载音乐文件(绝对路径): {abs_path}")
                     return True
                 except pygame.error as e2:
-                    print(f"使用绝对路径加载失败: {e2}")
+                    logger.error(f"使用绝对路径加载失败: {e2}")
             
             self.music_loaded = False
             return False
@@ -121,7 +142,7 @@ class AudioManager:
                 # 实际游戏中可以根据需要修改此逻辑
                 pygame.mixer.music.play()
             except pygame.error as e:
-                print(f"播放音乐失败: {e}")
+                logger.error(f"播放音乐失败: {e}")
                 
         # 关键修复：设置播放开始时间
         self.play_start_time = current_time
@@ -161,15 +182,19 @@ class AudioManager:
     
     def stop(self) -> None:
         """
-        停止音乐播放
+        停止音乐播放并重置音乐加载状态
         """
         try:
             if self.music_loaded and self.audio_available:
                 pygame.mixer.music.stop()
+                # 关键修复：卸载当前音乐，防止重复播放
+                pygame.mixer.music.unload()
+            # 重置加载状态，确保下次加载时重新开始
+            self.music_loaded = False
             self.music_playing = False
             self.reset_time_variables()
         except pygame.error as e:
-            print(f"停止音乐播放失败: {e}")
+            logger.error(f"停止音乐播放失败: {e}")
     
     def pause(self) -> None:
         """
@@ -189,7 +214,7 @@ class AudioManager:
             # 保存当前位置
             self.last_position = self.get_position()
         except pygame.error as e:
-            print(f"暂停音乐播放失败: {e}")
+            logger.error(f"暂停音乐播放失败: {e}")
     
     def resume(self) -> None:
         """
@@ -215,7 +240,7 @@ class AudioManager:
             
             self.music_playing = True
         except pygame.error as e:
-            print(f"恢复音乐播放失败: {e}")
+            logger.error(f"恢复音乐播放失败: {e}")
     
     def set_volume(self, volume: float) -> None:
         """
@@ -233,7 +258,7 @@ class AudioManager:
                 volume = max(0.0, min(1.0, volume))
                 pygame.mixer.music.set_volume(volume)
         except pygame.error as e:
-            print(f"设置音量失败: {e}")
+            logger.error(f"设置音量失败: {e}")
     
     def set_music_volume(self, volume: float) -> None:
         """
@@ -254,7 +279,7 @@ class AudioManager:
         """
         # 确保延迟在有效范围内
         self.music_delay = max(-1000.0, min(1000.0, delay))
-        print(f"设置音乐延迟: {self.music_delay}ms")
+        logger.info(f"设置音乐延迟: {self.music_delay}ms")
     
     def _load_notes_sfx(self) -> None:
         """
@@ -270,7 +295,7 @@ class AudioManager:
         
         # 检查目录是否存在
         if not os.path.exists(notes_dir):
-            print(f"警告: notes音效目录不存在 - {notes_dir}")
+            logger.warning(f"notes音效目录不存在 - {notes_dir}")
             return
         
         try:
@@ -288,9 +313,9 @@ class AudioManager:
                     sound.set_volume(self.sfx_volume)
                     # 存储音效
                     self.notes_sfx[sound_name] = sound
-                    print(f"成功加载音效: {sound_name}")
+                    logger.info(f"成功加载音效: {sound_name}")
         except Exception as e:
-            print(f"加载notes音效失败: {e}")
+            logger.error(f"加载notes音效失败: {e}")
     
     def play_note_sfx(self, sfx_name: str) -> None:
         """
@@ -310,7 +335,7 @@ class AudioManager:
             # 播放音效（只播放一次，不循环）
             self.notes_sfx[sfx_name].play()
         except Exception as e:
-            print(f"播放音效 '{sfx_name}' 失败: {e}")
+            logger.error(f"播放音效 '{sfx_name}' 失败: {e}")
     
     def set_sfx_volume(self, volume: float) -> None:
         """
@@ -330,7 +355,7 @@ class AudioManager:
             try:
                 sound.set_volume(self.sfx_volume)
             except Exception as e:
-                print(f"设置音效 '{sound_name}' 音量失败: {e}")
+                logger.error(f"设置音效 '{sound_name}' 音量失败: {e}")
     
     def is_playing(self) -> bool:
         """
@@ -351,4 +376,4 @@ class AudioManager:
             if self.audio_available:
                 pygame.mixer.quit()
         except pygame.error as e:
-            print(f"清理音频资源失败: {e}")
+            logger.error(f"清理音频资源失败: {e}")

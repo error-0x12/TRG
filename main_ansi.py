@@ -105,6 +105,9 @@ class ANSITRG:
         """
         try:
             print(f"开始加载谱面ID: {chart_id}")
+            # 首先停止任何正在播放的音频
+            self.audio_manager.stop()
+            
             chart_data = load_chart_by_id(chart_id)
             if not chart_data:
                 print(f"未找到谱面ID: {chart_id}")
@@ -145,6 +148,8 @@ class ANSITRG:
                     print(f"音频加载结果: {'成功' if success else '失败'}")
                 else:
                     print(f"警告: 音频文件不存在 - {audio_path}")
+                    # 当音频文件不存在时，停止之前播放的音频
+                    self.audio_manager.stop()
                     # 列出audio目录中的文件，帮助诊断
                     if os.path.exists(audio_dir):
                         print(f"audio目录中的文件:")
@@ -154,6 +159,8 @@ class ANSITRG:
                         print(f"错误: audio目录不存在")
             else:
                 print("chart文件中未指定音频文件")
+                # 当谱面没有音频文件时，停止之前播放的音频
+                self.audio_manager.stop()
             
             return True
         except Exception as e:
@@ -391,9 +398,9 @@ class ANSITRG:
         self.logger = logging.getLogger('TRG.Main')
         self.logger.setLevel(logging.INFO)
         
-        # 配置文件日志
+        # 配置文件日志 - 使用覆盖模式('w')
         log_file = os.path.join(os.path.dirname(__file__), 'main_log.log')
-        file_handler = logging.FileHandler(log_file, encoding='utf-8')
+        file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
         file_handler.setLevel(logging.INFO)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         file_handler.setFormatter(formatter)

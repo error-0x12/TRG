@@ -1,6 +1,27 @@
 import json
 import os
+import logging
 from typing import Dict, Any, Callable, List
+
+# 配置日志
+logger = logging.getLogger('TRG.ConfigManager')
+logger.setLevel(logging.INFO)
+
+# 清除现有的处理器
+if logger.handlers:
+    logger.handlers.clear()
+
+# 创建文件处理器 - 使用覆盖模式('w')
+log_file = os.path.join(os.path.dirname(__file__), 'config_log.log')
+file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
+file_handler.setLevel(logging.INFO)
+
+# 设置日志格式
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# 添加处理器到logger
+logger.addHandler(file_handler)
 
 class ConfigManager:
     """配置管理器，用于保存和加载游戏设置"""
@@ -110,4 +131,4 @@ class ConfigManager:
                 try:
                     callback(*args, **kwargs)
                 except Exception as e:
-                    print(f"Error in callback for event {event_name}: {e}")
+                    logger.error(f"Error in callback for event {event_name}: {e}")
