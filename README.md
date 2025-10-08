@@ -33,11 +33,8 @@ pip install -r requirements.txt
 ## 使用方法
 
 ### 运行游戏
-* 直接运行可执行文件
-```bash
-./Terminal_Rhythm_game
-```
-* 或者使用Python运行
+
+* 使用Python运行
 ```bash
 python main_ansi.py
 ```
